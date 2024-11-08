@@ -47,9 +47,13 @@ class Route {
 class Router {
     private $routeTable = [];
     private $defaultRoute;
+    private $request;
+    private $response;
 
     public function __construct() {
         $this->defaultRoute = null;
+        $this->request = new Request();
+        $this->response = new Response();
     }
 
     public function route($url, $verb) {
