@@ -1,4 +1,6 @@
 <?php
+require 'libs/request.php';
+require 'libs/response.php';
 
 class Route {
     private $url;
@@ -29,18 +31,19 @@ class Route {
                 if($part != $partsURL[$key]) {
                     return false;
                 }
-            } else {
-                $this->params[$part] = $partsURL[$key]; // es un parámetro
+            }else{// es un parámetro
+                $part = substr($part, 1);
+                $this->params[$part] = $partsURL[$key]; 
             }
         }
         return true;
     }
 
-    public function run(){
+    public function run($request, $response){
         $controller = $this->controller;  
         $method = $this->method;
-        $params = $this->params;
-        (new $controller())->$method($params);
+        $request->params = (object) $this->params;
+        (new $controller())->$method($request, $response);
     }
 }
 
@@ -59,7 +62,7 @@ class Router {
     public function route($url, $verb) {
         foreach ($this->routeTable as $route) {
             if($route->match($url, $verb)){
-                $route->run();
+                $route->run($this->request, $this->response);
                 return;
             }
         }
