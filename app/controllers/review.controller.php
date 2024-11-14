@@ -2,36 +2,20 @@
 require_once './app/models/review.model.php';
 require_once './app/views/api.view.php';
 
+
 class ReviewsController{
     private $model;
     private $view;
-    private $data;
 
     public function __construct() {
         $this->model = new ReviewsModel();
         $this->view = new ApiView();
-        $this->data = file_get_contents("php://input");
     }
 
-    public function getData() {
-        return json_decode($this->data);
-    }
-
-    //api/reviews
-    public function showAllReviews(){
-        $reviews = $this->model->getReviews();
-        // Verifica si la consulta devolvió datos
-        if (empty($reviews)) {
-            $this->view->response(['message' => 'No reviews found'], 404); // No encontró reseñas
-        } else {
-            // Devolver las reseñas en formato JSON
-            return $this->view->response($reviews);
-        }
-    }
     //api/reviews/:id
-    public function showReviewById($params){
-        $id_review = $params[':ID']; 
+    public function showReviewById($req){
         // obtengo el id de la tarea desde la ruta
+        $id_review = $req->params->ID; 
 
         // obtengo la tarea de la DB
         $review = $this->model->getReview($id_review);
@@ -43,4 +27,69 @@ class ReviewsController{
         // mando la tarea a la vista
         return $this->view->response($review);
     }
+
+    //api/reviews
+    public function getReviewList($req){
+        $rvwList = $this->model->getReviews();
+
+        $sortVal = 'id_review'; //criterio de ordenamiento por defecto
+        if (!empty($req->query->sortby) && ($this->model->isColumn($req->query->sortby) || ($req->query->sortby == 'song_name')))
+            $sortVal = $req->query->sortby;
+
+        $order = 'asc'; //orden por defecto
+        if (isset($req->query->order) && $req->query->order == 'desc') 
+            $order = 'desc';
+
+        if (!empty($rvwList)){ //si no esta vacia la ordeno y la envio a la vista
+            usort($rvwList, function($rvw1, $rvw2) use ($sortVal, $order){
+                return $this->comparator($rvw1, $rvw2, $sortVal, $order);});
+            $this->view->response($rvwList);
+        }else{
+            $this->view->response("There are no reviews in the system", 204);
+        }
+    }
+
+    /*funcion que compara un objeto con otro, dado un criterio, y retorna 1, 0 ó -1 en caso 
+    de ser mayor, igual, o menor, respectivamente */
+    private function comparator($a, $b, $value, $order){ 
+        if ($a->$value > $b->$value) $output = 1;
+        if ($a->$value == $b->$value) $output = 0;
+        if ($a->$value < $b->$value) $output = -1;
+        if ($order == 'desc') return -$output;
+        return $output;
+    }
+
+    public function editReview($req){
+        if ($this->model->getReview($req->params->id) == NULL){
+            $this->view->response("No such review for that id", 404);
+            return;
+        }
+        if (empty($req->body->rating) || empty($req->body->comment)){ 
+            $this->view->response("There are empty fields that need to be completed", 400);
+            return;
+        }
+
+        //por cuestiones de integridad de la bdd no voy a dejar que se modifiquen el id ni el nombre de la cancion
+        $id = (int) ($req->params->id);
+        $newRating = (int) $req->body->rating;
+        $newComment = htmlspecialchars($req->body->comment);
+        $this->model->updateReview($id, $newRating, $newComment);
+
+        $updatedRvw = $this->model->getReview($id);
+        $this->view->response($updatedRvw);
+    }
+
+    public function getRvwsByPage($req){ //item opc paginado
+        define('RANGE', 4); //cuantas reviews muestro por pagina
+        define('MAX_PAGES', ceil($this->model->countEntries()/RANGE));
+    
+        $pageInput = (int) $req->params->num;
+        $offset = 0;
+        if (!empty($pageInput) && ($pageInput <= MAX_PAGES) && ($pageInput > 0)){
+            $offset = (($pageInput-1)*RANGE);
+        }
+        $rvwsPortion = $this->model->getReviews($offset, RANGE);
+        $this->view->response($rvwsPortion);
+    }
+    
 }
