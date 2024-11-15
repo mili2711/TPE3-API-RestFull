@@ -9,7 +9,7 @@ $router = new Router();
 $router->setDefaultRoute('ReviewsController', 'getReviewList');
 
 // PARTE A 
-$router->addRoute('reviews', 'GET', 'ReviewsController', 'getReviewList');
+$router->addRoute('reviews', 'GET', 'ReviewsController', 'getReviewList'); //tratar de hacer un solo endpoint y la paginacion hacerla con query params
 $router->addRoute('reviews/page/:pagNum', 'GET', 'ReviewsController', 'getReviewList'); 
 $router->addRoute('reviews/page', 'GET', 'ReviewsController', 'getReviewList'); 
 $router->addRoute('reviews/:id', 'PUT', 'ReviewsController', 'editReview'); 
