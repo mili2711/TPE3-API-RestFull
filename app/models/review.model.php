@@ -34,7 +34,8 @@ class ReviewsModel {
         }else{
             $query = $this->db->prepare(
                 "SELECT `id_review`, `song_name`, `rating`, `comment` 
-                FROM `review` JOIN `song` ON review.song_id = song.song_id"
+                FROM `review` JOIN `song` ON review.song_id = song.song_id
+                ORDER BY id_review"
             );
         }
         $query->execute();

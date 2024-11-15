@@ -29,23 +29,43 @@ class ReviewsController{
     }
 
     public function getReviewList($req){
-        $rvwList = $this->model->getReviews();
-
-        $sortVal = 'id_review'; //criterio de ordenamiento por defecto
-        if (!empty($req->query->sortby) && ($this->model->isColumn($req->query->sortby) || ($req->query->sortby == 'song_name')))
-            $sortVal = $req->query->sortby;
-
-        $order = 'asc'; //orden por defecto
-        if (isset($req->query->order) && $req->query->order == 'desc') 
-            $order = 'desc';
-
-        if (!empty($rvwList)){ //si no esta vacia la ordeno y la envio a la vista
-            usort($rvwList, function($rvw1, $rvw2) use ($sortVal, $order){
-                return $this->comparator($rvw1, $rvw2, $sortVal, $order);});
+        if ($this->model->countEntries() > 0){
+            if (substr($req->query->resource, 0, 12) == 'reviews/page'){ //reviews paginadas
+                $page = 1; //pagina por defecto
+                if (isset($req->params->pagNum)) {$page = $req->params->pagNum;}
+                $rvwList = $this->getRvwsByPage($page);
+            }else{ //lista de reviews completa
+                $rvwList = $this->model->getReviews();
+            }
+            $this->processReviews($rvwList, $req->query);
             $this->view->response($rvwList);
         }else{
             $this->view->response("There are no reviews in the system", 204);
         }
+    }
+
+    private function getRvwsByPage(int $pageInput){ 
+        define('RANGE', 4); //cuantas reviews muestro por pagina
+        define('MAX_PAGES', ceil($this->model->countEntries()/RANGE));
+        $offset = 0;
+        if (($pageInput <= MAX_PAGES) && ($pageInput > 0)){
+            $offset = (($pageInput-1)*RANGE);
+        }
+        return $this->model->getReviews($offset, RANGE);
+    }
+
+    private function processReviews(&$rvws, $queries){
+        $sortVal = 'id_review'; //criterio de ordenamiento por defecto
+        if (!empty($queries->sortby) && ($this->model->isColumn($queries->sortby) || ($queries->sortby == 'song_name')))
+            {$sortVal = $queries->sortby;}
+
+        $order = 'asc'; //orden por defecto
+        if (isset($queries->order) && $queries->order == 'desc') 
+            $order = 'desc';
+
+        usort($rvws, function($rvw1, $rvw2) use ($sortVal, $order){
+            return $this->comparator($rvw1, $rvw2, $sortVal, $order);}
+        );
     }
 
     /*funcion que compara un objeto con otro, dado un criterio, y retorna 1, 0 ó -1 en caso 
@@ -57,6 +77,7 @@ class ReviewsController{
         if ($order == 'desc') return -$output;
         return $output;
     }
+
 
     public function editReview($req){
         if ($this->model->getReview($req->params->id) == NULL){
@@ -78,17 +99,6 @@ class ReviewsController{
         $this->view->response($updatedRvw);
     }
 
-    public function getRvwsByPage($req){ //item opc paginado
-        define('RANGE', 4); //cuantas reviews muestro por pagina
-        define('MAX_PAGES', ceil($this->model->countEntries()/RANGE));
     
-        $pageInput = (int) $req->params->num; //numero de pagina
-        $offset = 0;
-        if (!empty($pageInput) && ($pageInput <= MAX_PAGES) && ($pageInput > 0)){
-            $offset = (($pageInput-1)*RANGE);
-        }
-        $rvwsPortion = $this->model->getReviews($offset, RANGE);
-        $this->view->response($rvwsPortion);
-    }
     
 }

@@ -10,8 +10,9 @@ $router->setDefaultRoute('ReviewsController', 'getReviewList');
 
 // PARTE A 
 $router->addRoute('reviews', 'GET', 'ReviewsController', 'getReviewList');
+$router->addRoute('reviews/page/:pagNum', 'GET', 'ReviewsController', 'getReviewList'); 
+$router->addRoute('reviews/page', 'GET', 'ReviewsController', 'getReviewList'); 
 $router->addRoute('reviews/:id', 'PUT', 'ReviewsController', 'editReview'); 
-$router->addRoute('reviews/page/:num', 'GET', 'ReviewsController', 'getRvwsByPage'); //no tienen efecto los query param - PREGUNTAR
 
 // PARTE B
 $router->addRoute('reviews/:ID', 'GET', 'ReviewsController', 'showReviewById');
