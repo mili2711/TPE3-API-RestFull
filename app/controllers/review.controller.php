@@ -28,7 +28,6 @@ class ReviewsController{
         return $this->view->response($review);
     }
 
-    //api/reviews
     public function getReviewList($req){
         $rvwList = $this->model->getReviews();
 
@@ -69,7 +68,7 @@ class ReviewsController{
             return;
         }
 
-        //por cuestiones de integridad de la bdd no voy a dejar que se modifiquen el id ni el nombre de la cancion
+        //por cuestiones de integridad de la bdd no se pueden modificar ni el id ni el nombre de la cancion
         $id = (int) ($req->params->id);
         $newRating = (int) $req->body->rating;
         $newComment = htmlspecialchars($req->body->comment);
@@ -83,7 +82,7 @@ class ReviewsController{
         define('RANGE', 4); //cuantas reviews muestro por pagina
         define('MAX_PAGES', ceil($this->model->countEntries()/RANGE));
     
-        $pageInput = (int) $req->params->num;
+        $pageInput = (int) $req->params->num; //numero de pagina
         $offset = 0;
         if (!empty($pageInput) && ($pageInput <= MAX_PAGES) && ($pageInput > 0)){
             $offset = (($pageInput-1)*RANGE);
