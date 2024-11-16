@@ -72,7 +72,6 @@ class ReviewsController{
             return;
         }
 
-        //por cuestiones de integridad de la bdd no se pueden modificar ni el id ni el nombre de la cancion
         $id = (int) ($req->params->id);
         $newRating = (int) $req->body->rating;
         $newComment = htmlspecialchars($req->body->comment);
