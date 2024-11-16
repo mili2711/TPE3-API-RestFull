@@ -12,7 +12,7 @@ __Endpoints:__
   
   ***reviews?sortby=...*** para ordenar bajo alguno de los 4 criterios disponibles: 'id_review' (por defecto), 'song_name', 'rating', 'comment'.
     
-  ***reviews?order=asc - reviews?order=desc*** para ordenar de manera ascendente (por defecto) o descendente.
+  ***reviews?order=asc ó reviews?order=desc*** para ordenar de manera ascendente (por defecto) o descendente.
     
   ***reviews?page=...*** para ver las reseñas en forma paginada. Actualmente al haber 16 reseñas en total se decidió dividir el contenido equitativamente en 4 páginas pero se puede paginar de cualquier forma cambiando el valor de algunas constantes en el codigo.
 
