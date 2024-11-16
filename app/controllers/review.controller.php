@@ -34,17 +34,14 @@ class ReviewsController{
             if (!empty($req->query->sortby) && ($this->model->isColumn($req->query->sortby) || ($req->query->sortby == 'song_name')))
                 $sortVal = $req->query->sortby;
 
-            $order = 'asc';
-            if (isset($req->query->order) && $req->query->order == 'desc') 
-                $order = 'desc';
+            $order = 'ASC';
+            if (!empty($req->query->order) && $req->query->order == 'desc') 
+                $order = 'DESC';
 
-            if (substr($req->query->resource, 0, 12) == 'reviews/page'){ //peticion reviews paginadas
-                $page = 1;
-                if (isset($req->params->pagNum))
-                    $page = $req->params->pagNum;
-
+            if (!empty($req->query->page)){ //reviews paginadas
+                $page = $req->query->page;
                 $rvwList = $this->getRvwsByPage($page, $sortVal, $order);
-            }else{ //peticion lista de reviews completa
+            }else{ //lista de reviews completa
                 $rvwList = $this->model->getReviews(null, null, $sortVal, $order);
             }
             $this->view->response($rvwList);
@@ -53,15 +50,15 @@ class ReviewsController{
         }
     }
 
-    private function getRvwsByPage(int $pageInput, $sortQuery, $orderQuery){ 
+    private function getRvwsByPage($pageInput, $sortQuery, $orderQuery){ 
         define('RANGE', 4); //cuantas reviews muestro por pagina
         define('MAX_PAGES', ceil($this->model->countEntries()/RANGE));
         
-        if (($pageInput <= MAX_PAGES) && ($pageInput > 0))
+        if (($pageInput <= MAX_PAGES) && ($pageInput > 0)){
             $offset = (($pageInput-1)*RANGE);
-        else
+        }else{
             $offset = 0;
-        
+        }
         return $this->model->getReviews($offset, RANGE, $sortQuery, $orderQuery);
     }
 
@@ -84,7 +81,4 @@ class ReviewsController{
         $updatedRvw = $this->model->getReview($id);
         $this->view->response($updatedRvw);
     }
-
-    
-    
 }

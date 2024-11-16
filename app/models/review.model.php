@@ -29,15 +29,15 @@ class ReviewsModel
         $allowedColumns = ['id_review', 'song_name', 'rating', 'comment'];
         $allowedModes = ['ASC', 'DESC'];
 
-        if (in_array($_orderBy, $allowedColumns)) {
+        if (in_array($_orderBy, $allowedColumns)){
             $orderBy = $_orderBy;
-        } else {
+        }else{
             $orderBy = 'id_review';
         }
 
-        if (in_array($_mode, $allowedModes)) {
+        if (in_array($_mode, $allowedModes)){
             $mode = $_mode;
-        } else {
+        }else{
             $mode = 'ASC';
         }
 
@@ -50,7 +50,7 @@ class ReviewsModel
             $query = $this->db->prepare($basicQuery . "LIMIT :lim OFFSET :offs");
             $query->bindValue(':lim', (int) $lim, PDO::PARAM_INT);
             $query->bindValue(':offs', (int) $offs, PDO::PARAM_INT);
-        } else {
+        }else{
             $query = $this->db->prepare($basicQuery);
         }
         $query->execute();
