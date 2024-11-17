@@ -34,9 +34,10 @@ class ReviewsController{
             if (!empty($req->query->sortby) && ($this->model->isColumn($req->query->sortby) || ($req->query->sortby == 'song_name')))
                 $sortVal = $req->query->sortby;
 
-            $order = 'ASC';
+            $order = 'asc';
             if (!empty($req->query->order) && $req->query->order == 'desc') 
-                $order = 'DESC';
+                $order = 'desc';
+            $order = strtoupper($order);
 
             if (!empty($req->query->page)){ //reviews paginadas
                 $page = $req->query->page;
@@ -51,7 +52,7 @@ class ReviewsController{
     }
 
     private function getRvwsByPage($pageInput, $sortQuery, $orderQuery){ 
-        define('RANGE', 4); //cuantas reviews muestro por pagina
+        define('RANGE', 1); //cuantas reviews muestro por pagina
         define('MAX_PAGES', ceil($this->model->countEntries()/RANGE));
         
         if (($pageInput <= MAX_PAGES) && ($pageInput > 0)){
@@ -73,11 +74,29 @@ class ReviewsController{
         }
 
         $id = (int) ($req->params->id);
+        $song_name = $req->body->song_name;
         $newRating = (int) $req->body->rating;
         $newComment = htmlspecialchars($req->body->comment);
-        $this->model->updateReview($id, $newRating, $newComment);
+        $this->model->updateReview($id,$song_name, $newRating, $newComment);
 
         $updatedRvw = $this->model->getReview($id);
         $this->view->response($updatedRvw);
     }
+
+    public function createReview($req){
+        if (empty($req->body->song_name) ||empty($req->body->rating) || empty ($req->body->comment)){
+            return $this->view->response("Fill in the blanks", 400);
+        }
+        $song_name = $req->body->song_name;
+        $rating = $req->body->rating;
+        $comment = $req->body->comment;
+        $id_review = $this->model->insertReview($song_name, $rating, $comment);
+
+        if(!$id_review){
+            return $this->view->response("Could not create review", 500);
+        }
+        $review = $this->model->getReview($id_review);
+        return $this->view->response($review, 201);
+    }
+
 }

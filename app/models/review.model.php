@@ -14,7 +14,6 @@ class ReviewsModel
     {
         $query = $this->db->prepare("SELECT `id_review`, `song_name`, `rating`, `comment` 
             FROM `review` 
-            JOIN `song` ON review.song_id = song.song_id
             WHERE `id_review`= ?");
 
         $query->execute([$id_review]);
@@ -43,7 +42,7 @@ class ReviewsModel
 
         $basicQuery =
             "SELECT `id_review`, `song_name`, `rating`, `comment` 
-            FROM `review` JOIN `song` ON review.song_id = song.song_id
+            FROM `review` 
             ORDER BY $orderBy $mode ";
 
         if (isset($offs) && isset($lim)) {
@@ -71,9 +70,10 @@ class ReviewsModel
         return (bool) $query->fetchColumn();
     }
 
-    public function updateReview($id, $rating, $comment)
+    public function updateReview($id, $song_name, $rating, $comment)
     {
-        $query = $this->db->prepare("UPDATE `review` SET rating = :newRating, comment = :newComment WHERE id_review = :id");
+        $query = $this->db->prepare("UPDATE `review` SET rating = :newRating, song_name = :songName, comment = :newComment WHERE id_review = :id");
+        $query->bindParam(':songName', $song_name);
         $query->bindParam(':newRating', $rating);
         $query->bindParam(':newComment', $comment);
         $query->bindParam(':id', $id);
@@ -85,6 +85,14 @@ class ReviewsModel
         $query = $this->db->prepare("SELECT COUNT(*) AS 'totalEntries' FROM `review`");
         $query->execute();
         return $query->fetchColumn();
+    }
+
+    public function insertReview($song_name, $rating, $comment){ //o song_id )?
+        $query = $this->db->prepare("INSERT INTO review(song_name, rating, comment) VALUES (?,?,?)");
+        $query->execute([$song_name, $rating, $comment]);
+        $review = $this->db->lastInsertId();
+    
+        return $review;
     }
 
 }
