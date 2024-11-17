@@ -68,8 +68,13 @@ class ReviewsController{
             $this->view->response("No such review for that id", 404);
             return;
         }
-        if (empty($req->body->rating) || empty($req->body->comment)){ 
+        if (!isset($req->body->rating) || !isset($req->body->comment)){ 
             $this->view->response("There are empty fields that need to be completed", 400);
+            return;
+        }
+
+        if ($req->body->rating < 0 || $req->body->rating > 10){
+            $this->view->response("Rating value must be between 0 and 10", 400);
             return;
         }
 
@@ -77,7 +82,7 @@ class ReviewsController{
         $song_name = $req->body->song_name;
         $newRating = (int) $req->body->rating;
         $newComment = htmlspecialchars($req->body->comment);
-        $this->model->updateReview($id,$song_name, $newRating, $newComment);
+        $this->model->updateReview($id, $song_name, $newRating, $newComment);
 
         $updatedRvw = $this->model->getReview($id);
         $this->view->response($updatedRvw);
