@@ -4,7 +4,7 @@ __Integrantes:__
 
 __Descripción:__  
 API REST de reseñas sobre canciones con soporte para alta, baja y modificación de las mismas. 
-Cada reseña está compuesta por un id, el titulo de la canción, un puntaje del 1 al 10, y un breve comentario.
+Cada reseña está compuesta por un id, el titulo de la canción, un puntaje del 0 al 10, y un breve comentario.
 
 ---  
 __Endpoints y URLs:__  
@@ -25,7 +25,7 @@ __Endpoints y URLs:__
 - __localhost/Web_2/TPE3-API-RestFull/api/reviews/'id'__ (Método DELETE para eliminar una reseña en particular dado su id)
 
 - __localhost/Web_2/TPE3-API-RestFull/api/reviews/'id'__ (Método PUT para editar una reseña en particular dado su id)  
-  __Aclaración:__ Por cuestiones de integridad de la bdd, no se pueden modificar ni el id de la reseña ni el nombre de la canción. Si se edita alguno de estos dos campos la acción no va a tener efecto.
+  __Aclaración:__ Por cuestiones de integridad de la bdd, no se puede modificar el id de la reseña. Si se edita ese campo la acción no va a tener efecto.
 
 
 
