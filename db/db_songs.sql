@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 08-11-2024 a las 17:13:29
+-- Tiempo de generación: 18-11-2024 a las 01:30:41
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -58,31 +58,26 @@ INSERT INTO `artist` (`artist_id`, `artist_name`, `artist_img`) VALUES
 
 CREATE TABLE `review` (
   `id_review` int(11) NOT NULL,
-  `song_id` int(11) NOT NULL,
-  `rating` tinyint(10) UNSIGNED NOT NULL,
-  `comment` varchar(100) DEFAULT NULL
-) ;
+  `song_name` varchar(20) NOT NULL,
+  `rating` tinyint(10) NOT NULL,
+  `comment` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `review`
 --
 
-INSERT INTO `review` (`id_review`, `song_id`, `rating`, `comment`) VALUES
-(1, 0, 6, 'La canción tiene una gran energía, pero la letra es algo superficial.'),
-(2, 0, 9, 'Una de las mejores canciones de este artista, la melodía es adictiva.'),
-(3, 0, 5, 'El ritmo es pegajoso, pero la voz del cantante no me convence.'),
-(4, 0, 8, 'Excelente colaboración, el sonido es fresco y moderno.'),
-(5, 0, 7, 'La canción es emocional, pero su duración la hace algo repetitiva.'),
-(6, 0, 10, 'Una pieza maestra que muestra todo el talento del compositor.'),
-(7, 0, 6, 'La instrumentación es increíble, pero la letra no tiene mucha profundidad.'),
-(8, 0, 9, 'Amo cómo el artista logra mezclar géneros de forma tan natural.'),
-(9, 0, 4, 'Siento que ya he escuchado esta canción muchas veces antes.'),
-(10, 0, 8, 'Un tema con una gran carga emocional, que realmente me tocó.'),
-(11, 0, 7, 'Es una canción perfecta para el verano, llena de buen rollo.'),
-(12, 0, 6, 'La voz de la cantante es única, pero la canción no me atrapó por completo.'),
-(13, 0, 9, 'Este álbum es increíblemente cohesivo, cada canción fluye de maravilla.'),
-(14, 0, 7, 'Es una balada hermosa, pero un poco larga para mi gusto.'),
-(15, 0, 10, 'Una obra maestra, la letra tiene mucho significado personal para mí.');
+INSERT INTO `review` (`id_review`, `song_name`, `rating`, `comment`) VALUES
+(1, 'Giorgio by Moroder', 9, 'Excelente colaboración, el sonido es fresco y moderno.'),
+(2, 'Symphonia IX', 10, 'Sin duda, esta versión supera a la original que fue compuesta por Grimes.'),
+(3, 'Walkaway Blues', 10, 'Una de las mejores canciones de este artista, la melodía es adictiva.'),
+(4, 'Just Like You', 7, 'Descuidada y audaz. Viagra Boys nunca defrauda.'),
+(5, 'YOU MAKE ME FEEL LIK', 6, 'No sé qué estaban pensando cuando compusieron esta canción, pero es genial de todos modos.'),
+(6, 'You And Whose Army?', 8, 'Una pieza maestra que muestra todo el talento de la banda.'),
+(7, 'Heridas Dulces', 9, 'Un tema hermoso para bailar en el verano.'),
+(8, 'Smile', 10, 'Imposible que no te sientas feliz escuchando esta preciosa canción.'),
+(9, 'sometimes', 10, 'Una absoluta obra maestra. Inigualable.'),
+(10, 'Jugo', 8, 'Este álbum es increíblemente cohesivo, cada canción fluye de maravilla.');
 
 -- --------------------------------------------------------
 
@@ -105,7 +100,12 @@ CREATE TABLE `song` (
 INSERT INTO `song` (`song_id`, `artist_id`, `song_name`, `song_genre`, `song_year`) VALUES
 (15, 13, 'Kool Thing', 'Alternative Rock', 1990),
 (17, 11, 'Instant Crush (feat. Julian Casablancas)', 'Electronic', 2013),
-(18, 11, 'Something About Us', 'Electronic', 2001);
+(18, 11, 'Something About Us', 'Electronic', 2001),
+(30, 12, 'El tercio de los sueños', 'Rock', 1997),
+(31, 18, 'Te diria', 'Rock', 1994),
+(32, 18, 'Al atardecer', 'Rock', 1996),
+(33, 20, 'My Iron Lung', 'Alternative Rock', 1994),
+(34, 19, 'Cigarettes &amp; Alcohol', 'Rock, Britpop', 1994);
 
 -- --------------------------------------------------------
 
@@ -140,8 +140,7 @@ ALTER TABLE `artist`
 -- Indices de la tabla `review`
 --
 ALTER TABLE `review`
-  ADD PRIMARY KEY (`id_review`),
-  ADD KEY `fk_id_song` (`song_id`);
+  ADD PRIMARY KEY (`id_review`);
 
 --
 -- Indices de la tabla `song`
@@ -171,13 +170,13 @@ ALTER TABLE `artist`
 -- AUTO_INCREMENT de la tabla `review`
 --
 ALTER TABLE `review`
-  MODIFY `id_review` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_review` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `song`
 --
 ALTER TABLE `song`
-  MODIFY `song_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `song_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT de la tabla `user`
@@ -188,12 +187,6 @@ ALTER TABLE `user`
 --
 -- Restricciones para tablas volcadas
 --
-
---
--- Filtros para la tabla `review`
---
-ALTER TABLE `review`
-  ADD CONSTRAINT `fk_id_song` FOREIGN KEY (`song_id`) REFERENCES `song` (`song_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `song`
