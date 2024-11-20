@@ -52,7 +52,7 @@ class ReviewsController{
     }
 
     private function getRvwsByPage($pageInput, $sortQuery, $orderQuery){ 
-        define('RANGE', 1); //cuantas reviews muestro por pagina
+        define('RANGE', 3); //cuantas reviews muestro por pagina
         define('MAX_PAGES', ceil($this->model->countEntries()/RANGE));
         
         if (($pageInput <= MAX_PAGES) && ($pageInput > 0)){
